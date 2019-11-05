@@ -48,7 +48,41 @@ function Todo (todoName, todoNote) {
 //User interface logic
 var List = new TodoList();
 
+function displayTodoDetails(todoDetailsDisplay) {
+    var todoOutputList = $("ul#output-list");
+    var htmlForStoredTodos = "";
+    todoDetailsDisplay.todos.forEach(function(todoItem) {
+    htmlForStoredTodos += "<li id=" + todoItem.id + ">" + todoItem.todoName + "</li>";
+    });
+    todoOutputList.html(htmlForStoredTodos);
+};
+
+function showTodo(todoId) {
+    var todo = List.findtodoItem(todoId);
+    $("#show-list-details").show();
+    $(".todoName").html(todo.todoName);
+    $(".todoNote").html(todo.todoNote);
+    var buttons = $("#buttons");
+    buttons.empty();
+    buttons.append("<button class='deleteButton' id=" + + todo.id +  ">Delete</button>");
+}
+
+function attachTodoListener() {
+    $("ul#output-list").on("click", "li", function() {
+        showTodo(this.id);
+    });
+    $("#buttons").on("click", ".deleteButton", function() {
+        List.deletetodoItem(this.id);
+        $("#show-list-details").hide();
+        displayTodoDetails(List);
+      });
+    };
+
+
+
+
 $(document).ready(function() {
+    attachTodoListener();
     $("form#inputItem").submit(function(event) {
         event.preventDefault();
         var inputtedTodo = $("input#new-todo-item").val();
@@ -56,6 +90,6 @@ $(document).ready(function() {
 
         var newTodo = new Todo(inputtedTodo, inputtedNote);
         List.addTodoItem(newTodo);
-        console.log(List.todos);
+        displayTodoDetails(List);
     })
 })
